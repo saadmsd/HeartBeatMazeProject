@@ -35,12 +35,12 @@ public class Game : MonoBehaviour
     [SerializeField]
     TextMeshPro displayText;
 
-	[SerializeField] private float gameDuration = 60f; // Temps total du jeu en secondes
-	[SerializeField] private TextMeshProUGUI timerText; // Affichage du temps restant
+	[SerializeField] private float gameDuration = 60f; 
+	[SerializeField] private TextMeshProUGUI timerText; 
 
 
 
-    // Remove agents from here and reference Level's monsters
+    
     [SerializeField]
     Level0 level0;
     
