@@ -14,6 +14,11 @@ public class Player : MonoBehaviour
 
 	Vector2 eyeAngles;
 
+	public GameObject door; 
+
+	public Game game;
+
+
 	void Awake ()
 	{
 		characterController = GetComponent<CharacterController>();
@@ -81,4 +86,16 @@ public class Player : MonoBehaviour
 		eyeAngles.y = Mathf.Clamp(eyeAngles.y, -45f, 45f);
 		eye.localRotation = Quaternion.Euler(eyeAngles.y, eyeAngles.x, 0f);
 	}
+
+
+	void OnControllerColliderHit(ControllerColliderHit hit)
+	{
+		// Vérifier si l'objet touché est la porte
+		if (hit.collider.gameObject == door)
+		{
+			// Appeler la méthode EndGame dans le script Game
+			game.EndGame("Vous avez gagné !");
+		}
+	}
+
 }

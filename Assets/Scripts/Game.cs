@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.UI;
 
 using static Unity.Mathematics.math;
 
@@ -34,6 +35,11 @@ public class Game : MonoBehaviour
 	[SerializeField]
 	TextMeshPro displayText;
 
+	[SerializeField] private float gameDuration = 60f; // Temps total du jeu en secondes
+	[SerializeField] private TextMeshProUGUI timerText; // Affichage du temps restant
+
+
+
 	Maze maze;
 
 	Scent scent;
@@ -42,9 +48,24 @@ public class Game : MonoBehaviour
 
 	MazeCellObject[] cellObjects;
 
+	// pour le chronomètre
+	private float timeRemaining;
+	private bool isTimeUp = false;
+
+
 	void StartNewGame ()
 	{
 		isPlaying = true;
+		isTimeUp = false;
+		
+		// chronomètre
+		timeRemaining = gameDuration;
+		if (timerText != null)
+		{
+			timerText.gameObject.SetActive(true);
+			timerText.text = $"Time Left: {timeRemaining:F2} sec";
+		}
+		
 		displayText.gameObject.SetActive(false);
 		maze = new Maze(mazeSize);
 		scent = new Scent(maze);
@@ -77,6 +98,7 @@ public class Game : MonoBehaviour
 			int2(Random.Range(0, mazeSize.x / 4), Random.Range(0, mazeSize.y / 4))
 		));
 
+		
 		int2 halfSize = mazeSize / 2;
 		for (int i = 0; i < agents.Length; i++)
 		{
@@ -97,6 +119,10 @@ public class Game : MonoBehaviour
 		}
 	}
 
+
+
+
+
 	void Update ()
 	{
 		if (isPlaying)
@@ -112,6 +138,23 @@ public class Game : MonoBehaviour
 
 	void UpdateGame ()
 	{
+		if (isTimeUp) return; // pou éviter d'appeler endgame plusieurs fois
+
+		timeRemaining -= Time.deltaTime;
+
+		if (timeRemaining <= 0)
+		{
+			timeRemaining = 0;
+			isTimeUp = true;
+			EndGame("Time's up! You win !!");
+			return;
+		}
+
+		if (timerText != null)
+		{
+			timerText.text = $"Time Left: {timeRemaining:F2} sec";
+		}
+		
 		Vector3 playerPosition = player.Move();
 		NativeArray<float> currentScent = scent.Disperse(maze, playerPosition);
 		for (int i = 0; i < agents.Length; i++)
@@ -124,15 +167,22 @@ public class Game : MonoBehaviour
 				).sqrMagnitude < 1f
 			)
 			{
-				EndGame(agents[i].TriggerMessage);
+				EndGame(agents[i].TriggerMessage); // LOG le joueur a perdu
+			
 				return;
 			}
 		}
 	}
 
-	void EndGame (string message)
+	public void EndGame (string message)
 	{
 		isPlaying = false;
+		
+		if (timerText != null)
+		{
+			timerText.gameObject.SetActive(false);
+		}
+
 		displayText.text = message;
 		displayText.gameObject.SetActive(true);
 		for (int i = 0; i < agents.Length; i++)
