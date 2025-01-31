@@ -4,9 +4,9 @@ public class VariableChanger : MonoBehaviour
 {
     public Agent agent_monstre;  // Référence à l'Agent dont on veut modifier la vitesse
 
-    public Agent agent_gold;  
-    private float minSpeed = 0.1f;
-    private float maxSpeed = 4.5f;
+    public Agent agent_monstre2; // Référence à l'Agent dont on veut modifier la vitesse
+    private float minSpeed = 0.5f;
+    private float maxSpeed = 6.5f;
     private float speedIncrease = 0.1f; // Augmentation de la vitesse à chaque intervalle
     private float switchInterval = 1f; // Temps avant d'augmenter la vitesse
 
@@ -17,6 +17,7 @@ public class VariableChanger : MonoBehaviour
     {
         currentSpeed = minSpeed; // Initialise la vitesse au minimum
         agent_monstre.speed = currentSpeed;
+        agent_monstre2.speed = agent_monstre.speed;
         // Debug pour voir la progression de la vitesse
         Debug.Log("Speed: " + agent_monstre.speed);
     }
@@ -44,8 +45,9 @@ public class VariableChanger : MonoBehaviour
             // Réinitialisation du timer
             timer = 0f;
         }
-
+         agent_monstre2.speed = agent_monstre.speed;
          Debug.Log("Speed: " + agent_monstre.speed);
+        
 
         
     }
