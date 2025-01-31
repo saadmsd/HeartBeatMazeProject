@@ -30,7 +30,7 @@ public class Game : MonoBehaviour
     Player player;
 
 	[SerializeField]
-	Agent[] agents;
+	private Agent[] agents;
 
     [SerializeField]
     TextMeshPro displayText;
@@ -107,11 +107,12 @@ public class Game : MonoBehaviour
 		
         // Initialize monsters (agents) from the Level script
         List<GameObject> monsters = level.GetMonsters();  // Get monsters created in Level
-        Agent[] agents = new Agent[monsters.Count];  // Create an agent array with the same size
+        agents = new Agent[monsters.Count];  // Create an agent array with the same size
         for (int i = 0; i < monsters.Count; i++)
         {
+            agents[i] = monsters[i].GetComponent<Agent>();
             agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
-            monsters[i].transform.position = agents[i].transform.position;
+            //monsters[i].transform.position = agents[i].transform.position;
         }
     }
 

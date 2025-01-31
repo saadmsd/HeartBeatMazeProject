@@ -33,7 +33,7 @@ public class Level : MonoBehaviour
     private Vector3 GetRandomPosition()
     {
         // Generate a random position within the level bounds
-        return new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
+        return new Vector3(Random.Range(-10, 10), 1, Random.Range(-10, 10));
     }
 
     public List<GameObject> GetMonsters()
