@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class VariableChanger : MonoBehaviour
@@ -5,6 +6,8 @@ public class VariableChanger : MonoBehaviour
     public Agent agent_monstre;  // Référence à l'Agent dont on veut modifier la vitesse
 
     public Agent agent_monstre2; // Référence à l'Agent dont on veut modifier la vitesse
+
+    public List<GameObject> monsters;
     private float minSpeed = 0.5f;
     private float maxSpeed = 6.5f;
     private float speedIncrease = 0.1f; // Augmentation de la vitesse à chaque intervalle

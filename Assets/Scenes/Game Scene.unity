@@ -297,7 +297,7 @@ MonoBehaviour:
   player: {fileID: 2084950774}
   agents: []
   displayText: {fileID: 7270601477899884428}
-  gameDuration: 60
+  gameDuration: 200
   timerText: {fileID: 8627820}
   level: {fileID: 469549575}
 --- !u!4 &469549574
@@ -328,6 +328,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   monsterPrefab: {fileID: 1328164406638418147, guid: 5d117ad7840077f418c3d90d8d76c187, type: 3}
+  goalPrefab: {fileID: 8258056480296344373, guid: 8367f0ce064562e4faa49c78a74bf625, type: 3}
 --- !u!1 &942811624
 GameObject:
   m_ObjectHideFlags: 0
@@ -357,8 +358,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5309c5935d60e5c479449f3a54b4684e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agent_monstre: {fileID: 0}
-  agent_monstre2: {fileID: 0}
+  agent_monstre: {fileID: 4667555044793929126, guid: fc70683b8b606499a80e512cd6d4af57, type: 3}
+  agent_monstre2: {fileID: 1619710624179212917, guid: 5d117ad7840077f418c3d90d8d76c187, type: 3}
+  monsters: []
 --- !u!4 &942811626
 Transform:
   m_ObjectHideFlags: 0

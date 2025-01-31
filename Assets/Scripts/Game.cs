@@ -107,12 +107,20 @@ public class Game : MonoBehaviour
 		
         // Initialize monsters (agents) from the Level script
         List<GameObject> monsters = level.GetMonsters();  // Get monsters created in Level
-        agents = new Agent[monsters.Count];  // Create an agent array with the same size
+        List<GameObject> goals = level.GetGoals();  // Get goals created in Level
+        int nb_agents = monsters.Count + goals.Count;  // Number of agents = number of monsters + number of goals
+        agents = new Agent[nb_agents];  // Create an agent array with the same size
         for (int i = 0; i < monsters.Count; i++)
         {
             agents[i] = monsters[i].GetComponent<Agent>();
             agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
             //monsters[i].transform.position = agents[i].transform.position;
+        }
+        for (int i = monsters.Count; i < nb_agents; i++)
+        {
+            agents[i] = goals[i - monsters.Count].GetComponent<Agent>();
+            agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
+            //goals[i - monsters.Count].transform.position = agents[i].transform.position;
         }
     }
 
