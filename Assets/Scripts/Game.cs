@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using Unity.Collections;
 using Unity.Jobs;
@@ -10,147 +11,121 @@ using Random = UnityEngine.Random;
 
 public class Game : MonoBehaviour
 {
-	[SerializeField]
-	MazeVisualization visualization;
+    [SerializeField]
+    MazeVisualization visualization;
 
-	[SerializeField]
-	int2 mazeSize = int2(20, 20);
+    [SerializeField]
+    int2 mazeSize = int2(20, 20);
 
-	[SerializeField, Tooltip("Use zero for random seed.")]
-	int seed;
+    [SerializeField, Tooltip("Use zero for random seed.")]
+    int seed;
 
-	[SerializeField, Range(0f, 1f)]
-	float
-		pickLastProbability = 0.5f,
-		openDeadEndProbability = 0.5f,
-		openArbitraryProbability = 0.5f;
+    [SerializeField, Range(0f, 1f)]
+    float pickLastProbability = 0.5f,
+          openDeadEndProbability = 0.5f,
+          openArbitraryProbability = 0.5f;
 
-	[SerializeField]
-	Player player;
+    [SerializeField]
+    Player player;
 
-	[SerializeField]
-	Agent[] agents;
+    [SerializeField]
+    TextMeshPro displayText;
 
-	[SerializeField]
-	TextMeshPro displayText;
+    // Remove agents from here and reference Level's monsters
+    [SerializeField]
+    Level level;
 
-	Maze maze;
+    Maze maze;
 
-	Scent scent;
+    Scent scent;
 
-	bool isPlaying;
+    bool isPlaying;
 
-	MazeCellObject[] cellObjects;
+    MazeCellObject[] cellObjects;
 
-	void StartNewGame ()
-	{
-		isPlaying = true;
-		displayText.gameObject.SetActive(false);
-		maze = new Maze(mazeSize);
-		scent = new Scent(maze);
-		new FindDiagonalPassagesJob
-		{
-			maze = maze
-		}.ScheduleParallel(
-			maze.Length, maze.SizeEW, new GenerateMazeJob
-			{
-				maze = maze,
-				seed = seed != 0 ? seed : Random.Range(1, int.MaxValue),
-				pickLastProbability = pickLastProbability,
-				openDeadEndProbability = openDeadEndProbability,
-				openArbitraryProbability = openArbitraryProbability
-			}.Schedule()
-		).Complete();
+    void StartNewGame ()
+    {
+        isPlaying = true;
+        displayText.gameObject.SetActive(false);
+        maze = new Maze(mazeSize);
+        scent = new Scent(maze);
 
-		if (cellObjects == null || cellObjects.Length != maze.Length)
-		{
-			cellObjects = new MazeCellObject[maze.Length];
-		}
-		visualization.Visualize(maze, cellObjects);
+        // Maze generation code
+        new FindDiagonalPassagesJob
+        {
+            maze = maze
+        }.ScheduleParallel(
+            maze.Length, maze.SizeEW, new GenerateMazeJob
+            {
+                maze = maze,
+                seed = seed != 0 ? seed : Random.Range(1, int.MaxValue),
+                pickLastProbability = pickLastProbability,
+                openDeadEndProbability = openDeadEndProbability,
+                openArbitraryProbability = openArbitraryProbability
+            }.Schedule()
+        ).Complete();
 
-		if (seed != 0)
-		{
-			Random.InitState(seed);
-		}
+        if (cellObjects == null || cellObjects.Length != maze.Length)
+        {
+            cellObjects = new MazeCellObject[maze.Length];
+        }
+        visualization.Visualize(maze, cellObjects);
 
-		player.StartNewGame(maze.CoordinatesToWorldPosition(
-			int2(Random.Range(0, mazeSize.x / 4), Random.Range(0, mazeSize.y / 4))
-		));
+        if (seed != 0)
+        {
+            Random.InitState(seed);
+        }
 
-		int2 halfSize = mazeSize / 2;
-		for (int i = 0; i < agents.Length; i++)
-		{
-			var coordinates =
-				int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y));
-			if (coordinates.x < halfSize.x && coordinates.y < halfSize.y)
-			{
-				if (Random.value < 0.5f)
-				{
-					coordinates.x += halfSize.x;
-				}
-				else
-				{
-					coordinates.y += halfSize.y;
-				}
-			}
-			agents[i].StartNewGame(maze, coordinates);
-		}
-	}
+        player.StartNewGame(maze.CoordinatesToWorldPosition(
+            int2(Random.Range(0, mazeSize.x / 4), Random.Range(0, mazeSize.y / 4))
+        ));
 
-	void Update ()
-	{
-		if (isPlaying)
-		{
-			UpdateGame();
-		}
-		else if (Input.GetKeyDown(KeyCode.Space))
-		{
-			StartNewGame();
-			UpdateGame();
-		}
-	}
+        // Initialize monsters (agents) from the Level script
+        List<GameObject> monsters = level.GetMonsters();  // Get monsters created in Level
+        Agent[] agents = new Agent[monsters.Count];  // Create an agent array with the same size
+        for (int i = 0; i < monsters.Count; i++)
+        {
+            agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
+            monsters[i].transform.position = agents[i].transform.position;
+        }
+    }
 
-	void UpdateGame ()
-	{
-		Vector3 playerPosition = player.Move();
-		NativeArray<float> currentScent = scent.Disperse(maze, playerPosition);
-		for (int i = 0; i < agents.Length; i++)
-		{
-			Vector3 agentPosition = agents[i].Move(currentScent);
-			if (
-				new Vector2(
-					agentPosition.x - playerPosition.x,
-					agentPosition.z - playerPosition.z
-				).sqrMagnitude < 1f
-			)
-			{
-				EndGame(agents[i].TriggerMessage);
-				return;
-			}
-		}
-	}
+    void Update ()
+    {
+        if (isPlaying)
+        {
+            UpdateGame();
+        }
+        else if (Input.GetKeyDown(KeyCode.Space))
+        {
+            StartNewGame();
+            UpdateGame();
+        }
+    }
 
-	void EndGame (string message)
-	{
-		isPlaying = false;
-		displayText.text = message;
-		displayText.gameObject.SetActive(true);
-		for (int i = 0; i < agents.Length; i++)
-		{
-			agents[i].EndGame();
-		}
+    void UpdateGame ()
+    {
+        Vector3 playerPosition = player.Move();
+        NativeArray<float> currentScent = scent.Disperse(maze, playerPosition);
 
-		for (int i = 0; i < cellObjects.Length; i++)
-		{
-			cellObjects[i].Recycle();
-		}
+        // Iterate through agents created by Level
+        List<GameObject> monsters = level.GetMonsters();
+        for (int i = 0; i < monsters.Count; i++)
+        {
+            Vector3 agentPosition = monsters[i].transform.position;
+            if (new Vector2(agentPosition.x - playerPosition.x, agentPosition.z - playerPosition.z).sqrMagnitude < 1f)
+            {
+                EndGame("Game Over! Monster caught you.");
+                return;
+            }
+        }
+    }
 
-		OnDestroy();
-	}
-
-	void OnDestroy ()
-	{
-		maze.Dispose();
-		scent.Dispose();
-	}
+    void EndGame (string message)
+    {
+        isPlaying = false;
+        displayText.text = message;
+        displayText.gameObject.SetActive(true);
+        // Add any cleanup here if necessary
+    }
 }
