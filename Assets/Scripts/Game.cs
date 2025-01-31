@@ -42,7 +42,15 @@ public class Game : MonoBehaviour
 
     // Remove agents from here and reference Level's monsters
     [SerializeField]
-    Level level;
+    Level0 level0;
+    
+    [SerializeField]
+    Level1 level1;
+
+    [SerializeField]
+    Level2 level2;
+
+    int niveau;
 
     Maze maze;
 
@@ -61,6 +69,8 @@ public class Game : MonoBehaviour
     {
         isPlaying = true;
 		isTimeUp = false;
+
+        niveau = 2;
 		
 		// chronomètre
 		timeRemaining = gameDuration;
@@ -104,24 +114,68 @@ public class Game : MonoBehaviour
             int2(Random.Range(0, mazeSize.x / 4), Random.Range(0, mazeSize.y / 4))
         ));
 
-		
-        // Initialize monsters (agents) from the Level script
-        List<GameObject> monsters = level.GetMonsters();  // Get monsters created in Level
-        List<GameObject> goals = level.GetGoals();  // Get goals created in Level
-        int nb_agents = monsters.Count + goals.Count;  // Number of agents = number of monsters + number of goals
-        agents = new Agent[nb_agents];  // Create an agent array with the same size
-        for (int i = 0; i < monsters.Count; i++)
-        {
-            agents[i] = monsters[i].GetComponent<Agent>();
-            agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
-            //monsters[i].transform.position = agents[i].transform.position;
+		if (niveau == 2) {
+
+            List<GameObject> monsters = level2.GetMonsters(); 
+            List<GameObject> goals = level2.GetGoals();  
+        
+            int nb_agents = monsters.Count + goals.Count;  
+            agents = new Agent[nb_agents];  
+            
+            for (int i = 0; i < monsters.Count; i++)
+            {
+                agents[i] = monsters[i].GetComponent<Agent>();
+                agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
+            
+            }
+            for (int i = monsters.Count; i < nb_agents; i++)
+            {
+                agents[i] = goals[i - monsters.Count].GetComponent<Agent>();
+                agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
+                
+            }
+            
+        }else if (niveau == 1) {
+            List<GameObject> monsters = level1.GetMonsters(); 
+            List<GameObject> goals = level1.GetGoals();  
+        
+            int nb_agents = monsters.Count + goals.Count;  
+            agents = new Agent[nb_agents];  
+            
+            for (int i = 0; i < monsters.Count; i++)
+            {
+                agents[i] = monsters[i].GetComponent<Agent>();
+                agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
+            
+            }
+            for (int i = monsters.Count; i < nb_agents; i++)
+            {
+                agents[i] = goals[i - monsters.Count].GetComponent<Agent>();
+                agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
+                
+            }
+        } else if (niveau == 0) {
+            List<GameObject> monsters = level0.GetMonsters(); 
+            List<GameObject> goals = level0.GetGoals();  
+        
+            int nb_agents = monsters.Count + goals.Count;  
+            agents = new Agent[nb_agents];  
+            
+            for (int i = 0; i < monsters.Count; i++)
+            {
+                agents[i] = monsters[i].GetComponent<Agent>();
+                agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
+            
+            }
+            for (int i = monsters.Count; i < nb_agents; i++)
+            {
+                agents[i] = goals[i - monsters.Count].GetComponent<Agent>();
+                agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
+                
+            }
         }
-        for (int i = monsters.Count; i < nb_agents; i++)
-        {
-            agents[i] = goals[i - monsters.Count].GetComponent<Agent>();
-            agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
-            //goals[i - monsters.Count].transform.position = agents[i].transform.position;
-        }
+        
+        
     }
 
 

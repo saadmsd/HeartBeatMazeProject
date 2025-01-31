@@ -267,6 +267,8 @@ GameObject:
   - component: {fileID: 469549574}
   - component: {fileID: 469549573}
   - component: {fileID: 469549575}
+  - component: {fileID: 469549577}
+  - component: {fileID: 469549576}
   m_Layer: 0
   m_Name: Game
   m_TagString: Untagged
@@ -299,7 +301,9 @@ MonoBehaviour:
   displayText: {fileID: 7270601477899884428}
   gameDuration: 200
   timerText: {fileID: 8627820}
-  level: {fileID: 469549575}
+  level0: {fileID: 469549575}
+  level1: {fileID: 469549576}
+  level2: {fileID: 469549577}
 --- !u!4 &469549574
 Transform:
   m_ObjectHideFlags: 0
@@ -324,7 +328,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 469549572}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d2b3a158df274e33baa1e06448f51d7, type: 3}
+  m_Script: {fileID: 11500000, guid: 1391c019fbf351c42848cb2a26776847, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  monsterPrefab: {fileID: 1328164406638418147, guid: 5d117ad7840077f418c3d90d8d76c187, type: 3}
+  goalPrefab: {fileID: 8258056480296344373, guid: 8367f0ce064562e4faa49c78a74bf625, type: 3}
+--- !u!114 &469549576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 469549572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed626513f9461ed4e928d65bac24e566, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  monsterPrefab: {fileID: 1328164406638418147, guid: 5d117ad7840077f418c3d90d8d76c187, type: 3}
+  goalPrefab: {fileID: 8258056480296344373, guid: 8367f0ce064562e4faa49c78a74bf625, type: 3}
+--- !u!114 &469549577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 469549572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d888079682ffa3a4daf6213f14e2b72d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   monsterPrefab: {fileID: 1328164406638418147, guid: 5d117ad7840077f418c3d90d8d76c187, type: 3}
@@ -345,7 +377,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &942811625
 MonoBehaviour:
   m_ObjectHideFlags: 0
