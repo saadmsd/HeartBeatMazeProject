@@ -4,6 +4,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.UI;
 
 using static Unity.Mathematics.math;
 
@@ -28,8 +29,16 @@ public class Game : MonoBehaviour
     [SerializeField]
     Player player;
 
+	[SerializeField]
+	Agent[] agents;
+
     [SerializeField]
     TextMeshPro displayText;
+
+	[SerializeField] private float gameDuration = 60f; // Temps total du jeu en secondes
+	[SerializeField] private TextMeshProUGUI timerText; // Affichage du temps restant
+
+
 
     // Remove agents from here and reference Level's monsters
     [SerializeField]
@@ -43,9 +52,24 @@ public class Game : MonoBehaviour
 
     MazeCellObject[] cellObjects;
 
+	// pour le chronomètre
+	private float timeRemaining;
+	private bool isTimeUp = false;
+
+
     void StartNewGame ()
     {
         isPlaying = true;
+		isTimeUp = false;
+		
+		// chronomètre
+		timeRemaining = gameDuration;
+		if (timerText != null)
+		{
+			timerText.gameObject.SetActive(true);
+			timerText.text = $"Time Left: {timeRemaining:F2} sec";
+		}
+		
         displayText.gameObject.SetActive(false);
         maze = new Maze(mazeSize);
         scent = new Scent(maze);
@@ -80,6 +104,7 @@ public class Game : MonoBehaviour
             int2(Random.Range(0, mazeSize.x / 4), Random.Range(0, mazeSize.y / 4))
         ));
 
+		
         // Initialize monsters (agents) from the Level script
         List<GameObject> monsters = level.GetMonsters();  // Get monsters created in Level
         Agent[] agents = new Agent[monsters.Count];  // Create an agent array with the same size
@@ -89,6 +114,10 @@ public class Game : MonoBehaviour
             monsters[i].transform.position = agents[i].transform.position;
         }
     }
+
+
+
+
 
     void Update ()
     {
@@ -103,29 +132,65 @@ public class Game : MonoBehaviour
         }
     }
 
-    void UpdateGame ()
-    {
-        Vector3 playerPosition = player.Move();
-        NativeArray<float> currentScent = scent.Disperse(maze, playerPosition);
+	void UpdateGame ()
+	{
+		if (isTimeUp) return; // pou éviter d'appeler endgame plusieurs fois
 
-        // Iterate through agents created by Level
-        List<GameObject> monsters = level.GetMonsters();
-        for (int i = 0; i < monsters.Count; i++)
-        {
-            Vector3 agentPosition = monsters[i].transform.position;
-            if (new Vector2(agentPosition.x - playerPosition.x, agentPosition.z - playerPosition.z).sqrMagnitude < 1f)
-            {
-                EndGame("Game Over! Monster caught you.");
-                return;
-            }
-        }
-    }
+		timeRemaining -= Time.deltaTime;
 
-    void EndGame (string message)
-    {
-        isPlaying = false;
-        displayText.text = message;
-        displayText.gameObject.SetActive(true);
-        // Add any cleanup here if necessary
-    }
+		if (timeRemaining <= 0)
+		{
+			timeRemaining = 0;
+			isTimeUp = true;
+			EndGame("Time's up! You win !!");
+			return;
+		}
+
+		if (timerText != null)
+		{
+			timerText.text = $"Time Left: {timeRemaining:F2} sec";
+		}
+		
+		Vector3 playerPosition = player.Move();
+		NativeArray<float> currentScent = scent.Disperse(maze, playerPosition);
+		for (int i = 0; i < agents.Length; i++)
+		{
+			Vector3 agentPosition = agents[i].Move(currentScent);
+			if (
+				new Vector2(
+					agentPosition.x - playerPosition.x,
+					agentPosition.z - playerPosition.z
+				).sqrMagnitude < 1f
+			)
+			{
+				EndGame(agents[i].TriggerMessage); // LOG le joueur a perdu
+			
+				return;
+			}
+		}
+	}
+
+	void EndGame (string message)
+	{
+		isPlaying = false;
+		displayText.text = message;
+		displayText.gameObject.SetActive(true);
+		for (int i = 0; i < agents.Length; i++)
+		{
+			agents[i].EndGame();
+		}
+
+		for (int i = 0; i < cellObjects.Length; i++)
+		{
+			cellObjects[i].Recycle();
+		}
+
+		OnDestroy();
+	}
+
+	void OnDestroy ()
+	{
+		maze.Dispose();
+		scent.Dispose();
+	}
 }

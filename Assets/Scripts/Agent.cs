@@ -8,7 +8,7 @@ public class Agent : MonoBehaviour
 	Color color = Color.white;
 
 	[SerializeField, Min(0f)]
-	float speed = 1f;
+	public float speed ;
 
 	[SerializeField]
 	 string triggerMessage;
@@ -127,3 +127,4 @@ public class Agent : MonoBehaviour
 		}
 	}
 }
+
