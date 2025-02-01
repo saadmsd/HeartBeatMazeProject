@@ -40,7 +40,7 @@ public class Game : MonoBehaviour
     TextMeshPro displayText;
 
     
-
+    private float switchInterval = 1f; 
     
 	private float gameDuration = 300f; 
 	[SerializeField] private TextMeshProUGUI timerText; 
@@ -79,6 +79,7 @@ public class Game : MonoBehaviour
 	private float timeRemaining;
 	private bool isTimeUp = false;
 
+    private float timer_warning = 0f;
 
     void StartNewGame ()
     {
@@ -264,6 +265,8 @@ public class Game : MonoBehaviour
 		if (isTimeUp) return; // pou éviter d'appeler endgame plusieurs fois
 
 		timeRemaining -= Time.deltaTime;
+        timer_warning += Time.deltaTime;
+
 
 		if (timeRemaining <= 0)
 		{
@@ -282,6 +285,11 @@ public class Game : MonoBehaviour
         bool warining_or_not = udpListener.warningText();
         if (warining_or_not) {
             warningText.gameObject.SetActive(true);
+            if (timer_warning >= switchInterval)
+            {
+                timeRemaining -= 5;
+                timer_warning = 0;
+            }
         } else {
             warningText.gameObject.SetActive(false);
         }
