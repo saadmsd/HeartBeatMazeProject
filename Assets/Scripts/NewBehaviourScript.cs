@@ -78,6 +78,11 @@ public class UDPListener : MonoBehaviour
         // }
         return speedFactor;
     }
+
+
+    public bool warningText(){
+        return (HR_10s > 100);
+    }
     
     void OnApplicationQuit()
     {

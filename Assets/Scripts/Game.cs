@@ -62,6 +62,12 @@ public class Game : MonoBehaviour
 
     [SerializeField]
     CalibrationLevel calibrationLevel ;
+
+
+    [SerializeField]
+
+    //NewBehaviourScript newBehaviourScript;
+
     public int niveau = -1;
 
     Maze maze;
@@ -231,6 +237,13 @@ public class Game : MonoBehaviour
 
             gameDuration = 160f;
         }
+
+
+        // if (newBehaviourScript.warningText == true) {
+        //     warningText.gameObject.SetActive(true);
+        // } else {
+        //     warningText.gameObject.SetActive(false);
+        // }
         
         
     }
