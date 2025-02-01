@@ -16,6 +16,7 @@ public class UDPListener : MonoBehaviour
     public float HRV_1min { get; private set; }
     public float HR_10s { get; private set; }
     public float HRV_10s { get; private set; }
+    public float speedFactor { get; private set; } = 1.0f;
     
     void Start()
     {
@@ -45,6 +46,7 @@ public class UDPListener : MonoBehaviour
                     HRV_10s = float.Parse(values[3], CultureInfo.InvariantCulture);
                     
                     Debug.Log($"HR(1min): {HR_1min} BPM, HRV(1min): {HRV_1min} ms, HR(10s): {HR_10s} BPM, HRV(10s): {HRV_10s} ms");
+                    speedFactor = CalculateSpeedFactor();
                 }
                 else
                 {
@@ -56,6 +58,25 @@ public class UDPListener : MonoBehaviour
                 Debug.LogError("Erreur UDP: " + e.Message);
             }
         }
+    }
+    public float CalculateSpeedFactor()
+    {
+        int bpm_baseline = 70;
+        // Example logic: Increase speed if HR is high or HRV is low
+        float speedFactor = 1.0f;
+        if (HR_10s > bpm_baseline) // Example threshold for high heart rate
+        {
+            speedFactor = HR_10s / bpm_baseline;
+        }
+        // else if (HR_10s < bpm_baseline) // Example threshold for low heart rate
+        // {
+        //     speedFactor -= bpm_baseline / HR_10s;
+        // }
+        // if (HRV_10s < 50) // Example threshold for low heart rate variability
+        // {
+        //     speedFactor += 0.5f;
+        // }
+        return speedFactor;
     }
     
     void OnApplicationQuit()
