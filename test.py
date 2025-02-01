@@ -3,7 +3,9 @@ import numpy as np
 import time
 from scipy.signal import find_peaks
 from collections import deque
-from bitalino import BITalino
+#from bitalino import BITalino
+import csv
+import os
 
 # Configuration de BITalino
 MAC_ADDRESS = "20:17:09:18:59:61"
@@ -45,26 +47,54 @@ def calculate_hr_and_hrv(ppg_signal, sampling_rate):
     
     return hr_1min, hrv_1min, hr_10s, hrv_10s
 
-try:
-    print("Connexion à BITalino...")
-    device = BITalino(MAC_ADDRESS)
-    device.start(SAMPLING_RATE, CHANNEL)
+def send_realtime_data():
+    """Envoie les données en temps réel à Unity via un socket UDP"""
     
-    while True:
-        raw_data = device.read(1000)  # Lire 1000 échantillons (10 sec environ)
-        ppg_signal = raw_data[:, 5]  # Extraire le canal PPG
+    try:
+        print("Connexion à BITalino...")
+        device = BITalino(MAC_ADDRESS)
+        device.start(SAMPLING_RATE, CHANNEL)
         
-        hr_1min, hrv_1min, hr_10s, hrv_10s = calculate_hr_and_hrv(ppg_signal, SAMPLING_RATE)
-             
-        if hr_1min is not None and hrv_1min is not None and hr_10s is not None and hrv_10s is not None:
-            data_to_send = f"{hr_1min:.2f},{hrv_1min:.2f},{hr_10s:.2f},{hrv_10s:.2f}"
-            sock.sendto(data_to_send.encode(), (UDP_IP, UDP_PORT))
-            print(f"HR(1min): {hr_1min:.2f} BPM, HRV(1min): {hrv_1min:.2f} ms, HR(10s): {hr_10s:.2f} BPM, HRV(10s): {hrv_10s:.2f} ms - Envoyé à Unity")
-        
-        time.sleep(1)  # Pause avant la prochaine lecture
+        while True:
+            raw_data = device.read(1000)  # Lire 1000 échantillons (10 sec environ)
+            ppg_signal = raw_data[:, 5]  # Extraire le canal PPG
+            
+            hr_1min, hrv_1min, hr_10s, hrv_10s = calculate_hr_and_hrv(ppg_signal, SAMPLING_RATE)
+                
+            if hr_1min is not None and hrv_1min is not None and hr_10s is not None and hrv_10s is not None:
+                data_to_send = f"{hr_1min:.2f},{hrv_1min:.2f},{hr_10s:.2f},{hrv_10s:.2f}"
+                sock.sendto(data_to_send.encode(), (UDP_IP, UDP_PORT))
+                print(f"HR(1min): {hr_1min:.2f} BPM, HRV(1min): {hrv_1min:.2f} ms, HR(10s): {hr_10s:.2f} BPM, HRV(10s): {hrv_10s:.2f} ms - Envoyé à Unity")
+            
+            time.sleep(1)  # Pause avant la prochaine lecture
 
-except KeyboardInterrupt:
-    print("Arrêt du script.")
-    device.stop()
-    device.close()
-    sock.close()
+    except KeyboardInterrupt:
+        print("Arrêt du script.")
+        device.stop()
+        device.close()
+        sock.close()
+
+def send_sample_data():
+    """Envoie des données d'exemple à Unity pour tester l'interface"""
+    data = os.path.join(os.path.dirname(__file__), "simulation.csv")
+    with open(data, "r") as file:
+        reader = csv.reader(file)
+        next(reader)  # Ignorer l'en-tête
+        for row in reader:
+            data_to_send = ",".join(row)
+            sock.sendto(data_to_send.encode(), (UDP_IP, UDP_PORT))
+            print(f"Envoyé à Unity: {data_to_send}")
+            time.sleep(1)
+    # try:
+    #     while True:
+    #         data_to_send = "75.00,10.00,80.00,15.00"  # HR(1min), HRV(1min), HR(10s), HRV(10s)
+    #         sock.sendto(data_to_send.encode(), (UDP_IP, UDP_PORT))
+    #         print(f"Envoyé à Unity: {data_to_send}")
+    #         time.sleep(1)
+    # except KeyboardInterrupt:
+    #     print("Arrêt du script.")
+    #     sock.close()
+    
+if __name__ == "__main__":
+    #send_realtime_data()
+    send_sample_data()

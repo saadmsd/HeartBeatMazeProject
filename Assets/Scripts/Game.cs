@@ -39,8 +39,9 @@ public class Game : MonoBehaviour
 	[SerializeField] private TextMeshProUGUI timerText; 
 
 
-
-    
+	[SerializeField]
+    UDPListener udpListener;
+	
     [SerializeField]
     Level0 level0;
     

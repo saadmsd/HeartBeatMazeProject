@@ -92,6 +92,10 @@ PrefabInstance:
       propertyPath: triggerMessage
       value: RED CAUGHT YOU
       objectReference: {fileID: 0}
+    - target: {fileID: 9189492828425068451, guid: 40c9947a163a3418a8d9ee294f9d608c, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
