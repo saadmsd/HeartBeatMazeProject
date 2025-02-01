@@ -14,9 +14,9 @@ public class Player : MonoBehaviour
 
 	Vector2 eyeAngles;
 
-	public GameObject door; 
+	
 
-	public Game game;
+
 
 
 	void Awake ()
