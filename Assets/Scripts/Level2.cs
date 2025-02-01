@@ -11,7 +11,10 @@ public class Level2 : MonoBehaviour
 
     [SerializeField]
     private GameObject goalPrefab;
-    
+
+    [SerializeField]
+    UDPListener udpListener;
+
     private int nb_monsters = 3;
 
     private int nb_goals = 1;
@@ -24,6 +27,10 @@ public class Level2 : MonoBehaviour
 
     private float currentSpeed;
     private float timer;
+    private float currentFactoredSpeed;
+    private float speed_factor = 1.0f;
+
+    private bool increase;
 
     private List<GameObject> monsters = new List<GameObject>();
 
@@ -51,15 +58,39 @@ public class Level2 : MonoBehaviour
         timer += Time.deltaTime;
 
         if (timer >= switchInterval)
-        {
-            // Increment the speed
+        {   
+            if (udpListener.speedFactor != speed_factor){ // If the speed factor has changed
+                // incrementer ou decrementer si bpm augmente ou baisse
+                Debug.Log("Speed factor changed from " + speed_factor + " to " + udpListener.speedFactor);
+                if (udpListener.speedFactor > speed_factor){
+                    increase = true;
+                }
+                else{
+                    increase = false;
+                }
+                speed_factor = udpListener.speedFactor;
+            }
+            // Increment the speed (time)
             currentSpeed += speedIncrease;
-
+            // Increment or decrement the speed (factor)
+            if (increase){
+                currentFactoredSpeed += speedIncrease * speed_factor;
+            }
+            else{
+                currentFactoredSpeed -= speedIncrease * speed_factor;
+            }
+            
             // Cap the speed at the maximum value
             if (currentSpeed > maxSpeed)
             {
                 currentSpeed = maxSpeed;
             }
+            if (currentFactoredSpeed > maxSpeed)
+            {
+                currentFactoredSpeed = maxSpeed;
+            }
+            // max entre speed du temps et factor
+            float agent_speed = Mathf.Max(currentSpeed, currentFactoredSpeed);
 
             // Update the speed for all monsters
             foreach (var monster in monsters)
@@ -67,15 +98,13 @@ public class Level2 : MonoBehaviour
                 Agent agent = monster.GetComponent<Agent>(); // Assuming the Agent component controls the speed
                 if (agent != null)
                 {
-                    agent.speed = currentSpeed;
+                    agent.speed = agent_speed;
                 }
             }
-
+            Debug.Log("Speed: " + agent_speed);
             // Reset the timer
             timer = 0f;
         }
-
-        Debug.Log("----------------Speed: " + currentSpeed);
     }
 
     private void CreateMonsters()

@@ -84,7 +84,7 @@ def send_sample_data():
             data_to_send = ",".join(row)
             sock.sendto(data_to_send.encode(), (UDP_IP, UDP_PORT))
             print(f"Envoyé à Unity: {data_to_send}")
-            time.sleep(1)
+            time.sleep(10)
     # try:
     #     while True:
     #         data_to_send = "75.00,10.00,80.00,15.00"  # HR(1min), HRV(1min), HR(10s), HRV(10s)
