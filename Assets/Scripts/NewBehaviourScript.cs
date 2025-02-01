@@ -85,19 +85,4 @@ public class UDPListener : MonoBehaviour
         udpClient?.Close();
         udpThread?.Abort();
     }
-
-    public float CalculateSpeedFactor()
-    {
-        // Example logic: Increase speed if HR is high or HRV is low
-        float speedFactor = 1.0f;
-        if (HR_10s > 100) // Example threshold for high heart rate
-        {
-            speedFactor += 0.5f;
-        }
-        if (HRV_10s < 50) // Example threshold for low heart rate variability
-        {
-            speedFactor += 0.5f;
-        }
-        return speedFactor;
-    }
 }
