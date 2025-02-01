@@ -39,10 +39,13 @@ public class Game : MonoBehaviour
     [SerializeField]
     TextMeshPro displayText;
 
+    
 
     
 	private float gameDuration = 300f; 
 	[SerializeField] private TextMeshProUGUI timerText; 
+
+    [SerializeField] private TextMeshProUGUI warningText; 
 
 
 	[SerializeField]
@@ -86,6 +89,8 @@ public class Game : MonoBehaviour
             if (niveau != 2){
                 niveau += 1;
             }
+
+            
 
         } 
       
