@@ -50,13 +50,13 @@ public class Game : MonoBehaviour
     [SerializeField]
     Level2 level2;
 
-    int niveau;
+    public int niveau = 0;
 
     Maze maze;
 
     Scent scent;
 
-    bool isPlaying;
+    public bool isPlaying { get; private set; } = false;
 
     MazeCellObject[] cellObjects;
 
@@ -70,7 +70,7 @@ public class Game : MonoBehaviour
         isPlaying = true;
 		isTimeUp = false;
 
-        niveau = 2;
+        //niveau = 2;
 		
 		// chronomètre
 		timeRemaining = gameDuration;

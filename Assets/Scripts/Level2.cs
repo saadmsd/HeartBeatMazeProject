@@ -5,6 +5,8 @@ using UnityEngine;
 public class Level2 : MonoBehaviour
 {
     [SerializeField]
+    public GameObject game;
+    [SerializeField]
     private GameObject monsterPrefab;
 
     [SerializeField]
@@ -41,7 +43,10 @@ public class Level2 : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {   
+        if ( !(game.GetComponent<Game>().isPlaying && game.GetComponent<Game>().niveau == 2)){
+            return;
+        }
         // Increase the speed of monsters over time
         timer += Time.deltaTime;
 
@@ -70,7 +75,7 @@ public class Level2 : MonoBehaviour
             timer = 0f;
         }
 
-        Debug.Log("Speed: " + currentSpeed);
+        Debug.Log("----------------Speed: " + currentSpeed);
     }
 
     private void CreateMonsters()
