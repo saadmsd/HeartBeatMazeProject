@@ -64,9 +64,6 @@ public class Game : MonoBehaviour
     CalibrationLevel calibrationLevel ;
 
 
-    [SerializeField]
-
-    UDPListener newBehaviourScript;
 
     public int niveau = -1;
 
@@ -238,12 +235,7 @@ public class Game : MonoBehaviour
             gameDuration = 160f;
         }
 
-        bool warining_or_not = newBehaviourScript.warningText();
-        if (warining_or_not) {
-            warningText.gameObject.SetActive(true);
-        } else {
-            warningText.gameObject.SetActive(false);
-        }
+        
         
         
     }
@@ -257,6 +249,8 @@ public class Game : MonoBehaviour
         if (isPlaying)
         {
             UpdateGame();
+
+
         }
         else if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -284,6 +278,13 @@ public class Game : MonoBehaviour
 		{
 			timerText.text = $"Time Left: {timeRemaining:F2} sec";
 		}
+
+        bool warining_or_not = udpListener.warningText();
+        if (warining_or_not) {
+            warningText.gameObject.SetActive(true);
+        } else {
+            warningText.gameObject.SetActive(false);
+        }
 		
 		Vector3 playerPosition = player.Move();
 		NativeArray<float> currentScent = scent.Disperse(maze, playerPosition);

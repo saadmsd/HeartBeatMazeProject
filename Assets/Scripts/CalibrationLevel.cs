@@ -76,7 +76,7 @@ public class CalibrationLevel : MonoBehaviour
             timer = 0f;
         }
 
-        Debug.Log("Speed: " + currentSpeed);
+       
     }
 
     private void CreateMonsters()
