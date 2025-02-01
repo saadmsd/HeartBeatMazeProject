@@ -23,6 +23,8 @@ public class Game : MonoBehaviour
 
     bool loose = true;
 
+    bool calibration = false;
+
     [SerializeField, Range(0f, 1f)]
     float pickLastProbability = 0.5f,
           openDeadEndProbability = 0.5f,
@@ -37,7 +39,9 @@ public class Game : MonoBehaviour
     [SerializeField]
     TextMeshPro displayText;
 
-	[SerializeField] private float gameDuration = 60f; 
+
+    
+	private float gameDuration = 300f; 
 	[SerializeField] private TextMeshProUGUI timerText; 
 
 
@@ -53,7 +57,9 @@ public class Game : MonoBehaviour
     [SerializeField]
     Level2 level2;
 
-    public int niveau = 0;
+    [SerializeField]
+    CalibrationLevel calibrationLevel ;
+    public int niveau = -1;
 
     Maze maze;
 
@@ -76,14 +82,19 @@ public class Game : MonoBehaviour
         
 
         if (loose == false) {
-            niveau += 1;
+            
+            if (niveau != 2){
+                niveau += 1;
+            }
+
         } 
-        //niveau = 2;
+      
 		
 		// chronomètre
 		timeRemaining = gameDuration;
-		if (timerText != null)
+		if (timerText != null )
 		{
+            
 			timerText.gameObject.SetActive(true);
 			timerText.text = $"Time Left: {timeRemaining:F2} sec";
 		}
@@ -122,6 +133,33 @@ public class Game : MonoBehaviour
             int2(Random.Range(0, mazeSize.x / 4), Random.Range(0, mazeSize.y / 4))
         ));
 
+        if (calibration == false) {
+            List<GameObject> monsters = calibrationLevel.GetMonsters(); 
+            List<GameObject> goals = calibrationLevel.GetGoals();  
+        
+            int nb_agents = monsters.Count + goals.Count;  
+            agents = new Agent[nb_agents];  
+            
+            for (int i = 0; i < monsters.Count; i++)
+            {
+                agents[i] = monsters[i].GetComponent<Agent>();
+                agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
+            
+            }
+            for (int i = monsters.Count; i < nb_agents; i++)
+            {
+                agents[i] = goals[i - monsters.Count].GetComponent<Agent>();
+                agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
+                
+            }
+
+            calibration = true;
+            niveau = 0;
+            return;
+        
+
+        }
+
 		if (niveau == 2) {
 
             List<GameObject> monsters = level2.GetMonsters(); 
@@ -142,6 +180,8 @@ public class Game : MonoBehaviour
                 agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
                 
             }
+
+            gameDuration = 60f;
             
         }else if (niveau == 1) {
             List<GameObject> monsters = level1.GetMonsters(); 
@@ -162,6 +202,8 @@ public class Game : MonoBehaviour
                 agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
                 
             }
+
+            gameDuration = 120f;
         } else if (niveau == 0) {
             List<GameObject> monsters = level0.GetMonsters(); 
             List<GameObject> goals = level0.GetGoals();  
@@ -181,6 +223,8 @@ public class Game : MonoBehaviour
                 agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
                 
             }
+
+            gameDuration = 160f;
         }
         
         
