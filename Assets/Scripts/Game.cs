@@ -66,7 +66,7 @@ public class Game : MonoBehaviour
 
     [SerializeField]
 
-    //NewBehaviourScript newBehaviourScript;
+    UDPListener newBehaviourScript;
 
     public int niveau = -1;
 
@@ -238,12 +238,12 @@ public class Game : MonoBehaviour
             gameDuration = 160f;
         }
 
-
-        // if (newBehaviourScript.warningText == true) {
-        //     warningText.gameObject.SetActive(true);
-        // } else {
-        //     warningText.gameObject.SetActive(false);
-        // }
+        bool warining_or_not = newBehaviourScript.warningText();
+        if (warining_or_not) {
+            warningText.gameObject.SetActive(true);
+        } else {
+            warningText.gameObject.SetActive(false);
+        }
         
         
     }
