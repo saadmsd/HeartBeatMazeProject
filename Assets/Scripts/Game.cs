@@ -21,6 +21,8 @@ public class Game : MonoBehaviour
     [SerializeField, Tooltip("Use zero for random seed.")]
     int seed;
 
+    bool loose = true;
+
     [SerializeField, Range(0f, 1f)]
     float pickLastProbability = 0.5f,
           openDeadEndProbability = 0.5f,
@@ -70,7 +72,12 @@ public class Game : MonoBehaviour
     {
         isPlaying = true;
 		isTimeUp = false;
+        
+        
 
+        if (loose == false) {
+            niveau += 1;
+        } 
         //niveau = 2;
 		
 		// chronomètre
@@ -206,7 +213,8 @@ public class Game : MonoBehaviour
 		{
 			timeRemaining = 0;
 			isTimeUp = true;
-			EndGame("Time's up! You win !!");
+			EndGame("Time's up! You lost !!");
+            loose = true;
 			return;
 		}
 
@@ -238,6 +246,14 @@ public class Game : MonoBehaviour
 	{
 		isPlaying = false;
 		displayText.text = message;
+
+        
+        if (message == "YOU CAUGHT YELLOW")
+        {
+            loose = false;
+        }else{
+            loose = true;
+        }
 		displayText.gameObject.SetActive(true);
 		for (int i = 0; i < agents.Length; i++)
 		{
