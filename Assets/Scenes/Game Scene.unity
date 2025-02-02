@@ -1178,7 +1178,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   listenPort: 5005
-  criticalBpmClip: {fileID: 8300000, guid: c4f03c2380b984bf68eb51091cdf9c53, type: 3}
+  criticalBpmClip: {fileID: 0}
 --- !u!4 &1674371814
 Transform:
   m_ObjectHideFlags: 0

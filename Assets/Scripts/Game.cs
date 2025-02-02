@@ -87,7 +87,9 @@ public class Game : MonoBehaviour
 
     void StartNewGame ()
     {
-        
+        // Masquer le curseur et le verrouiller au centre de l'écran
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
         calibrationText.gameObject.SetActive(false);
 
         isPlaying = true;
