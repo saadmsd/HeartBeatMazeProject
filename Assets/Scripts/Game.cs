@@ -108,7 +108,7 @@ public class Game : MonoBehaviour
             mazeSize = int2(20, 20);
             gameDuration = 100f;
         } else if (niveau == 2) {
-            mazeSize = int2(20, 20);
+            mazeSize = int2(30, 30);
             gameDuration = 100f;
         } else if (!calibration) {
             
