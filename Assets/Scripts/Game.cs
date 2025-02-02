@@ -45,6 +45,8 @@ public class Game : MonoBehaviour
 	private float gameDuration = 10f; 
 	[SerializeField] private TextMeshProUGUI timerText; 
 
+	[SerializeField] private TextMeshProUGUI bpmText;
+
     [SerializeField] private TextMeshProUGUI warningText; 
 
     
@@ -77,6 +79,8 @@ public class Game : MonoBehaviour
 
 	// pour le chronomètre
 	private float timeRemaining;
+	// pout le bpm
+	private float bpm;
 	private bool isTimeUp = false;
 
     private float timer_warning = 0f;
@@ -295,15 +299,24 @@ public class Game : MonoBehaviour
 			timerText.text = $"Time Left: {timeRemaining:F2} sec";
 		}
 
+		if (bpmText != null)
+		{
+			bpm = udpListener.HR_10s;
+			bpmText.text = $"BPM: {bpm:F2}";
+		}
         bool warining_or_not = udpListener.warningText();
         if (warining_or_not) {
             warningText.gameObject.SetActive(true);
+            timerText.color = Color.red;
+			bpmText.color = Color.red;
             if (timer_warning >= switchInterval)
             {
-                timeRemaining -= 5;
+                timeRemaining -= 2;
                 timer_warning = 0;
             }
         } else {
+			timerText.color = Color.yellow;
+			bpmText.color = Color.green;
             warningText.gameObject.SetActive(false);
         }
 		

@@ -18,11 +18,20 @@ public class UDPListener : MonoBehaviour
     public float HRV_10s { get; private set; }
     public float speedFactor { get; private set; } = 1.0f;
     
+    public AudioClip criticalBpmClip;
+    private AudioSource audioSource;
+
+    private const float criticalBpmThreshold = 100f; // Example threshold for critical BPM
+
     void Start()
     {
         udpThread = new Thread(new ThreadStart(ReceiveData));
         udpThread.IsBackground = true;
         udpThread.Start();
+
+        audioSource = GetComponent<AudioSource>();
+        audioSource.clip = criticalBpmClip;
+        audioSource.loop = false; // Play the sound once
     }
 
     void ReceiveData()
@@ -47,6 +56,8 @@ public class UDPListener : MonoBehaviour
                     
                     Debug.Log($"HR(1min): {HR_1min} BPM, HRV(1min): {HRV_1min} ms, HR(10s): {HR_10s} BPM, HRV(10s): {HRV_10s} ms");
                     speedFactor = CalculateSpeedFactor();
+
+                    CheckCriticalBpm();
                 }
                 else
                 {
@@ -59,15 +70,23 @@ public class UDPListener : MonoBehaviour
             }
         }
     }
+
+    private void CheckCriticalBpm()
+    {
+        if (HR_10s > criticalBpmThreshold && !audioSource.isPlaying)
+        {
+            audioSource.Play();
+        }
+    }
     public float CalculateSpeedFactor()
     {
         int bpm_baseline = 70;
         // Example logic: Increase speed if HR is high or HRV is low
-        float speedFactor = 1.0f;
-        if (HR_10s > bpm_baseline) // Example threshold for high heart rate
-        {
+        //float speedFactor = 1.0f;
+        // if (HR_10s > bpm_baseline) // Example threshold for high heart rate
+        // {
             speedFactor = HR_10s / bpm_baseline;
-        }
+        //}
         // else if (HR_10s < bpm_baseline) // Example threshold for low heart rate
         // {
         //     speedFactor -= bpm_baseline / HR_10s;
@@ -81,7 +100,7 @@ public class UDPListener : MonoBehaviour
 
 
     public bool warningText(){
-        return (HR_10s > 100);
+        return HR_10s > 100;
     }
     
     void OnApplicationQuit()
