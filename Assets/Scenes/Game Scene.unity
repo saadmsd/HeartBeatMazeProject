@@ -1143,7 +1143,7 @@ GameObject:
   - component: {fileID: 2084950774}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1204,7 +1204,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 3.5
   rotationSpeed: 180
-  mouseSensitivity: 2
+  mouseSensitivity: 3
   startingVerticalEyeAngle: 10
 --- !u!23 &1436922957260777175
 MeshRenderer:
