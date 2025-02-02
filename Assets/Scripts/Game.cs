@@ -16,7 +16,7 @@ public class Game : MonoBehaviour
     MazeVisualization visualization;
 
     [SerializeField]
-    int2 mazeSize = int2(20, 20);
+    int2 mazeSize;
 
     [SerializeField, Tooltip("Use zero for random seed.")]
     int seed;
@@ -42,10 +42,13 @@ public class Game : MonoBehaviour
     
     private float switchInterval = 1f; 
     
-	private float gameDuration = 300f; 
+	private float gameDuration = 10f; 
 	[SerializeField] private TextMeshProUGUI timerText; 
 
     [SerializeField] private TextMeshProUGUI warningText; 
+
+    
+    [SerializeField] private TextMeshProUGUI calibrationText; 
 
 
 	[SerializeField]
@@ -60,12 +63,9 @@ public class Game : MonoBehaviour
     [SerializeField]
     Level2 level2;
 
-    [SerializeField]
-    CalibrationLevel calibrationLevel ;
 
 
-
-    public int niveau = -1;
+    public int niveau =-1;
 
     Maze maze;
 
@@ -83,22 +83,41 @@ public class Game : MonoBehaviour
 
     void StartNewGame ()
     {
+        
+        calibrationText.gameObject.SetActive(false);
+
         isPlaying = true;
 		isTimeUp = false;
         
         
-
-        if (loose == false) {
-            
+        // on change de niveau
+        if (loose == false && calibration == true) {
             if (niveau != 2){
                 niveau += 1;
             }
-
-            
-
         } 
-      
-		
+
+        // on change la taille du labyrinthe
+
+       
+        if (niveau == 0) {
+            mazeSize = int2(15, 15);
+            gameDuration = 130f;
+        
+        } else if (niveau == 1) {
+            mazeSize = int2(20, 20);
+            gameDuration = 100f;
+        } else if (niveau == 2) {
+            mazeSize = int2(20, 20);
+            gameDuration = 100f;
+        } else if (!calibration) {
+            
+            mazeSize = int2(15, 15);
+            gameDuration = 10f;
+        }
+        
+
+
 		// chronomètre
 		timeRemaining = gameDuration;
 		if (timerText != null )
@@ -143,33 +162,17 @@ public class Game : MonoBehaviour
         ));
 
         if (calibration == false) {
-            List<GameObject> monsters = calibrationLevel.GetMonsters(); 
-            List<GameObject> goals = calibrationLevel.GetGoals();  
-        
-            int nb_agents = monsters.Count + goals.Count;  
-            agents = new Agent[nb_agents];  
-            
-            for (int i = 0; i < monsters.Count; i++)
-            {
-                agents[i] = monsters[i].GetComponent<Agent>();
-                agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
-            
-            }
-            for (int i = monsters.Count; i < nb_agents; i++)
-            {
-                agents[i] = goals[i - monsters.Count].GetComponent<Agent>();
-                agents[i].StartNewGame(maze, int2(Random.Range(0, mazeSize.x), Random.Range(0, mazeSize.y)));
-                
-            }
+
+            calibrationText.gameObject.SetActive(true);
 
             calibration = true;
-            niveau = 0;
+            
             return;
         
 
-        }
+        } else if (niveau == 2) {
 
-		if (niveau == 2) {
+
 
             List<GameObject> monsters = level2.GetMonsters(); 
             List<GameObject> goals = level2.GetGoals();  
@@ -190,7 +193,7 @@ public class Game : MonoBehaviour
                 
             }
 
-            gameDuration = 60f;
+            //gameDuration = 60f;
             
         }else if (niveau == 1) {
             List<GameObject> monsters = level1.GetMonsters(); 
@@ -212,7 +215,7 @@ public class Game : MonoBehaviour
                 
             }
 
-            gameDuration = 120f;
+           // gameDuration = 120f;
         } else if (niveau == 0) {
             List<GameObject> monsters = level0.GetMonsters(); 
             List<GameObject> goals = level0.GetGoals();  
@@ -233,7 +236,7 @@ public class Game : MonoBehaviour
                 
             }
 
-            gameDuration = 160f;
+           // gameDuration = 160f;
         }
 
         
@@ -256,6 +259,7 @@ public class Game : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Space))
         {
             StartNewGame();
+            
             UpdateGame();
         }
     }
@@ -270,10 +274,19 @@ public class Game : MonoBehaviour
 
 		if (timeRemaining <= 0)
 		{
+            calibrationText.gameObject.SetActive(false);
 			timeRemaining = 0;
 			isTimeUp = true;
-			EndGame("Time's up! You lost !!");
-            loose = true;
+			
+            
+            if (niveau == -1) {
+                EndGame("Time's up! You can Start");
+                
+                loose = false;
+            }else{
+                EndGame("Time's up! You lost !!");
+                loose = true;
+            }
 			return;
 		}
 

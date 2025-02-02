@@ -103,7 +103,7 @@ public class Level0 : MonoBehaviour
                     agent.speed = agent_speed;
                 }
             }
-            Debug.Log("Speed: " + agent_speed);
+           // Debug.Log("Speed: " + agent_speed);
             // Reset the timer
             timer = 0f;
         }
