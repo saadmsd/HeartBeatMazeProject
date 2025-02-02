@@ -14,8 +14,10 @@ public class Player : MonoBehaviour
 
 	Vector2 eyeAngles;
 
-	
+	private Light playerLight;
 
+	private float targetLightIntensity;
+    private float lightAdjustmentSpeed = 2.0f; // Speed of light adjustment
 
 
 
@@ -38,6 +40,7 @@ public class Player : MonoBehaviour
 	{
 		UpdateEyeAngles();
 		UpdatePosition();
+		AdjustLightIntensity();
 		return transform.localPosition;
 	}
 
@@ -85,6 +88,19 @@ public class Player : MonoBehaviour
 		}
 		eyeAngles.y = Mathf.Clamp(eyeAngles.y, -45f, 45f);
 		eye.localRotation = Quaternion.Euler(eyeAngles.y, eyeAngles.x, 0f);
+	}
+
+	public void SetLightIntensity(float intensity)
+	{
+		targetLightIntensity = intensity;
+	}
+	public void AdjustLightIntensity()
+	{
+		if (playerLight == null)
+		{
+			playerLight = GetComponentInChildren<Light>();
+		}
+		playerLight.intensity = Mathf.Lerp(playerLight.intensity, targetLightIntensity, Time.deltaTime * lightAdjustmentSpeed);
 	}
 
 }

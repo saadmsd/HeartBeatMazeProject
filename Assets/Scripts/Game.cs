@@ -311,12 +311,14 @@ public class Game : MonoBehaviour
             warningText.gameObject.SetActive(true);
             timerText.color = Color.red;
 			bpmText.color = Color.red;
+			player.SetLightIntensity(0.3f);
             if (timer_warning >= switchInterval)
             {
                 timeRemaining -= 2;
                 timer_warning = 0;
             }
         } else {
+			player.SetLightIntensity(1f);
 			timerText.color = Color.yellow;
 			bpmText.color = Color.green;
             warningText.gameObject.SetActive(false);
