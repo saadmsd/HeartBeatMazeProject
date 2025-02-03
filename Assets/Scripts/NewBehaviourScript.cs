@@ -23,7 +23,7 @@ public class UDPListener : MonoBehaviour
 
     public float bpm_baseline=70;
 
-    private const float criticalBpmThreshold = 100f; // Example threshold for critical BPM
+    public float criticalBpmThreshold = 100f; // Example threshold for critical BPM
 
     void Start()
     {
@@ -102,7 +102,7 @@ public class UDPListener : MonoBehaviour
 
 
     public bool warningText(){
-        return HR_10s > 100;
+        return HR_10s > criticalBpmThreshold;
     }
     
     void OnApplicationQuit()

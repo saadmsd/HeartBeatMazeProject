@@ -42,7 +42,7 @@ public class Game : MonoBehaviour
     
     private float switchInterval = 1f; 
     
-	private float gameDuration = 10f; 
+	private float gameDuration = 60f; 
 	[SerializeField] private TextMeshProUGUI timerText; 
 
 	[SerializeField] private TextMeshProUGUI bpmText;
@@ -119,7 +119,7 @@ public class Game : MonoBehaviour
         } else if (!calibration) {
             
             mazeSize = int2(15, 15);
-            gameDuration = 10f;
+            gameDuration = 60f;
         }
         
 
@@ -287,7 +287,8 @@ public class Game : MonoBehaviour
             
             if (niveau == -1) {
                 EndGame("Time's up! You can Start");
-                udpListener.bpm_baseline = udpListener.HR_1min;
+                udpListener.bpm_baseline = udpListener.HR_1min - 2;
+                udpListener.criticalBpmThreshold = udpListener.bpm_baseline + 7;
                 Debug.Log("BPM baseline: " + udpListener.bpm_baseline);
                 loose = false;
             }else{
