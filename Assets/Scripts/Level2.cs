@@ -20,8 +20,8 @@ public class Level2 : MonoBehaviour
     private int nb_goals = 1;
 
     private float minSpeed = 1.0f;
-    private float maxSpeed = 4.5f;
-    private float speedIncrease = 0.2f; 
+    private float maxSpeed = 3.5f;
+    private float speedIncrease = 0.1f; 
     private float switchInterval = 2f; 
 
 

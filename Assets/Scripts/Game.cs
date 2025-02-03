@@ -287,7 +287,8 @@ public class Game : MonoBehaviour
             
             if (niveau == -1) {
                 EndGame("Time's up! You can Start");
-                
+                udpListener.bpm_baseline = udpListener.HR_1min;
+                Debug.Log("BPM baseline: " + udpListener.bpm_baseline);
                 loose = false;
             }else{
                 EndGame("Time's up! You lost !!");

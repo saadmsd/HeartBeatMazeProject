@@ -21,6 +21,8 @@ public class UDPListener : MonoBehaviour
     public AudioClip criticalBpmClip;
     private AudioSource audioSource;
 
+    public float bpm_baseline=70;
+
     private const float criticalBpmThreshold = 100f; // Example threshold for critical BPM
 
     void Start()
@@ -80,7 +82,7 @@ public class UDPListener : MonoBehaviour
     }
     public float CalculateSpeedFactor()
     {
-        int bpm_baseline = 70;
+        //int bpm_baseline = 70;
         // Example logic: Increase speed if HR is high or HRV is low
         //float speedFactor = 1.0f;
         // if (HR_10s > bpm_baseline) // Example threshold for high heart rate
