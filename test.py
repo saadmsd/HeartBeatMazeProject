@@ -3,7 +3,7 @@ import numpy as np
 import time
 from scipy.signal import find_peaks
 from collections import deque
-#from bitalino import BITalino
+from bitalino import BITalino
 import csv
 import os
 
@@ -56,7 +56,7 @@ def send_realtime_data():
         device.start(SAMPLING_RATE, CHANNEL)
         
         while True:
-            raw_data = device.read(1000)  # Lire 1000 échantillons (10 sec environ)
+            raw_data = device.read(400)  # Lire 1000 échantillons (10 sec environ)
             ppg_signal = raw_data[:, 5]  # Extraire le canal PPG
             
             hr_1min, hrv_1min, hr_10s, hrv_10s = calculate_hr_and_hrv(ppg_signal, SAMPLING_RATE)
@@ -96,5 +96,5 @@ def send_sample_data():
     #     sock.close()
     
 if __name__ == "__main__":
-    #send_realtime_data()
-    send_sample_data()
+    send_realtime_data()
+    #  send_sample_data()
